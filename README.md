@@ -54,3 +54,5 @@ A digital implementation of the classic social deduction board game "Salem 1692"
 | Same Network | All players must be on the same network |
 | Port Access | Host must allow incoming connections on port `5555` (default) |
 | Internet Play | Use **port forwarding** on your router, or a VPN service like **Hamachi** |
+
+![My Screenshot](\Users\CommonerX2\Documents\Year2semester2\Programming in Python\Lec_and_finalprojectreq\S__10412035.jpg)
