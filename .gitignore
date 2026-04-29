@@ -1,0 +1,4 @@
+# Koon: we dont need to have /pycache because it only stores temp data locally
+# so i put it in this ".gitignore"
+__pycache__/
+koon_requirement.txt
