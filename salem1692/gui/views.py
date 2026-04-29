@@ -63,11 +63,12 @@ class SetupView(ttk.Frame):
             side="left", padx=10
         )
 
-        ttk.Button(
-            button_frame,
-            text="View History",
-            command=lambda: self.app.show_history_view(),
-        ).pack(side="left", padx=10)
+        # KOON REMOVED
+        # ttk.Button(
+        #     button_frame,
+        #     text="View History",
+        #     command=lambda: self.app.show_history_view(),
+        # ).pack(side="left", padx=10)
 
     def update_player_fields(self):
         for widget in self.names_frame.winfo_children():

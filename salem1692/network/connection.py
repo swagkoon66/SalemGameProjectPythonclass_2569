@@ -7,6 +7,27 @@ import socket
 import threading
 import time
 from .protocol import send_message, receive_message, Message, MessageType
+import logging
+import os
+
+base_dir = os.path.dirname(__file__)
+temp_dir = os.path.join(base_dir, "temp")
+os.makedirs(temp_dir, exist_ok=True)
+
+log_file = os.path.join(temp_dir, "connection.log")
+
+# NEW (reliable):
+logger = logging.getLogger('connection_logger')
+logger.setLevel(logging.INFO)
+logger.handlers = []
+
+file_handler = logging.FileHandler(log_file, mode='w')
+file_handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
 
 class ClientConnection:
     def __init__(self, host='localhost', port=5555):

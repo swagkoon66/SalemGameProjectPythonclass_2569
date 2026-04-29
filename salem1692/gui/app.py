@@ -11,7 +11,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from game_logic import Game
-from utils.helpers import save_game_result, get_game_history
+from utils.helpers import setup_logging, save_game_result
 from gui.views import SetupView, GameView, HistoryView
 
 class SalemGameApp:
@@ -55,11 +55,11 @@ class SalemGameApp:
         
     def show_history_view(self):
         """Show game history view"""
-        history_data = get_game_history()
+        # history_data = get_game_history()
         
-        self.clear_container()
-        self.current_view = HistoryView(self.main_container, self, history_data)
-        self.current_view.pack(fill='both', expand=True)
+        # self.clear_container()
+        # self.current_view = HistoryView(self.main_container, self, history_data)
+        # self.current_view.pack(fill='both', expand=True)
         
     def clear_container(self):
         """Clear all widgets from main container"""
@@ -68,13 +68,18 @@ class SalemGameApp:
             
     def end_game(self, winner, players, duration):
         """Handle game end"""
-        # Save game result
-        save_game_result(winner, players, duration)
-        
         # Show result dialog
         result_msg = f"Game Over!\n{winner} have won the game!"
         messagebox.showinfo("Game Over", result_msg)
         
+        # KOON save game result as logging
+        try:
+            logger = setup_logging()
+            save_game_result(logger, winner, players, duration)
+        except Exception as e:
+            print(e.__traceback__)
+            print("HERE!")
+            
         # Return to setup
         self.show_setup_view()
         

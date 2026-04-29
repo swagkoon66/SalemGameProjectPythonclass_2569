@@ -16,13 +16,18 @@ os.makedirs(temp_dir, exist_ok=True)
 
 log_file = os.path.join(temp_dir, "protocol.log")
 
-logging.basicConfig(
-    filename=log_file,
-    level=logging.INFO,
-    filemode="w",
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
+# NEW (reliable):
+logger = logging.getLogger('connection_logger')
+logger.setLevel(logging.INFO)
+logger.handlers = []
+
+file_handler = logging.FileHandler(log_file, mode='w')
+file_handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
 
 class MessageType(Enum):
     CONNECT = "CONNECT"
