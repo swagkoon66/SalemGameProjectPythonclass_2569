@@ -8,8 +8,20 @@ import struct
 import logging
 import socket
 from enum import Enum
+import os
 
-logging.basicConfig(level=logging.INFO)
+base_dir = os.path.dirname(__file__)
+temp_dir = os.path.join(base_dir, "temp")
+os.makedirs(temp_dir, exist_ok=True)
+
+log_file = os.path.join(temp_dir, "protocol.log")
+
+logging.basicConfig(
+    filename=log_file,
+    level=logging.INFO,
+    filemode="w",
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 class MessageType(Enum):

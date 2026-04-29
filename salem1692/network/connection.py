@@ -9,8 +9,6 @@ import time
 import logging
 from .protocol import send_message, receive_message, Message, MessageType
 
-logger = logging.getLogger(__name__)
-
 class ClientConnection:
     def __init__(self, host='localhost', port=5555):
         self.host = host
