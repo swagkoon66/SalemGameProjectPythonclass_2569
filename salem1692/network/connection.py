@@ -6,7 +6,6 @@ Handles client and server connections with improved reliability
 import socket
 import threading
 import time
-import logging
 from .protocol import send_message, receive_message, Message, MessageType
 
 class ClientConnection:
