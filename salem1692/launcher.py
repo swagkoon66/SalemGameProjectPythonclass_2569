@@ -16,6 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from network.connection import ServerConnection, ClientConnection
 from network.protocol import Message, MessageType
 from game_logic.game import Game
+from utils.helpers import save_game_result
 
 APP_BG = "#0f1722"
 SURFACE_BG = "#16202d"
@@ -1017,6 +1018,8 @@ class GameWindow:
         self.accuse_btn.config(state="disabled")
         self.end_btn.config(state="disabled")
         self.status_lbl.config(text=f"🏆 {winner} wins!", fg="#f39c12")
+        # Save game using function from 'utils' module
+        save_game_result(msg)
 
     def _on_close(self):
         self.win.withdraw()

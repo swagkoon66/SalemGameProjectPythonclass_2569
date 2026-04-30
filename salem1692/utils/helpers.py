@@ -1,99 +1,123 @@
 """
-Utility helper functions
+Utility helper functions for save result
 """
 
 import logging
-import sqlite3
+import os
 from datetime import datetime
 
-def setup_logging():
-    """Setup logging configuration"""
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        filename='salem_game.log'
-    )
-    return logging.getLogger(__name__)
 
-def save_game_result(winner, players, game_duration):
-    """Save game result to database"""
+def save_game_result(msg):
+    # Save game result as logging
     try:
-        conn = sqlite3.connect('data/game_history.db')
-        cursor = conn.cursor()
+        # Get directory where this file (helpers.py) is located
+        helpers_dir = os.path.dirname(os.path.abspath(__file__))
         
-        # Create table if it doesn't exist
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS game_history (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                date TEXT,
-                winner TEXT,
-                players TEXT,
-                duration INTEGER,
-                num_players INTEGER,
-                num_witches INTEGER
-            )
-        ''')
+        # Go up one level to project root, then into data folder
+        project_root = os.path.dirname(helpers_dir)
+        data_dir = os.path.join(project_root, "data")
         
-        # Insert game result
-        players_str = ','.join([p.name for p in players])
-        num_witches = sum(1 for p in players if p.is_witch())
+        # Create data directory if it doesn't exist
+        os.makedirs(data_dir, exist_ok=True)
         
-        cursor.execute('''
-            INSERT INTO game_history (date, winner, players, duration, num_players, num_witches)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (
-            datetime.now().isoformat(),
-            winner,
-            players_str,
-            game_duration,
-            len(players),
-            num_witches
-        ))
+        # Log file in data directory
+        log_file = os.path.join(data_dir, "Latest_game_result.log")
         
-        conn.commit()
-        conn.close()
-        return True
-    except Exception as e:
-        print(f"Error saving game result: {e}")
-        return False
+        print(f"\nDEBUG: Saving log to: {log_file}\n")
+        
+        # Create logger
+        logger = logging.getLogger('game_result_logger')
+        logger.setLevel(logging.INFO)
+        
+        # Remove existing handlers
+        if logger.handlers:
+            for handler in logger.handlers[:]:
+                handler.close()
+                logger.removeHandler(handler)
+        
+        # Create file handler
+        file_handler = logging.FileHandler(log_file, mode='w')
+        file_handler.setLevel(logging.INFO)
+        
+        # Create formatter WITHOUT timestamp (just the message)
+        formatter = logging.Formatter('%(message)s')
+        file_handler.setFormatter(formatter)
+        
+        # Add handler to logger
+        logger.addHandler(file_handler)
+        
+        # Write game results
+        # First line WITH timestamp
+        logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - The game result')
+        # Rest WITHOUT timestamp (formatter only shows message)
+        logger.info('WINNERS')
+        logger.info(msg)
 
-def get_game_history(limit=10):
-    """Retrieve game history from database"""
+        # CRITICAL: Flush and close the handler
+        file_handler.flush()
+        file_handler.close()
+        logger.removeHandler(file_handler)
+        
+        print("Game result saved successfully!\n")
+        
+    except Exception as e:
+        print(f"Error saving game log: {e}")
+        import traceback
+        traceback.print_exc()
+    return True
+    
+def test_logging_path():
+    """Test logging path and permissions on startup"""
+    print("\n" + "="*60)
+    print("TESTING LOGGING PATH")
+    print("="*60)
+    
     try:
-        conn = sqlite3.connect('data/game_history.db')
-        cursor = conn.cursor()
+        # Get directory where this file (helpers.py) is located
+        helpers_dir = os.path.dirname(os.path.abspath(__file__))
+        print(f"Helpers directory: {helpers_dir}")
         
-        cursor.execute('''
-            SELECT date, winner, players, num_players, num_witches
-            FROM game_history
-            ORDER BY date DESC
-            LIMIT ?
-        ''', (limit,))
+        # Go up one level to project root, then into data folder
+        project_root = os.path.dirname(helpers_dir)
+        print(f"Project root: {project_root}")
         
-        results = cursor.fetchall()
-        conn.close()
-        return results
+        data_dir = os.path.join(project_root, "data")
+        print(f"Data directory: {data_dir}")
+        
+        # Create data directory if it doesn't exist
+        os.makedirs(data_dir, exist_ok=True)
+        print(f"Directory created/exists: ✓")
+        
+        # Log file will be in data directory
+        log_file = os.path.join(data_dir, "Latest_game_result.log")
+        print(f"Log file path: {log_file}")
+        
+        # Test write permissions
+        test_content = f"Test write at {datetime.now()}\n"
+        with open(log_file, 'w') as f:
+            f.write(test_content)
+        print(f"Write test: ✓")
+        
+        # Verify file was created
+        if os.path.exists(log_file):
+            file_size = os.path.getsize(log_file)
+            print(f"File exists: ✓ (size: {file_size} bytes)")
+        else:
+            print(f"File exists: ✗ WARNING!")
+        
+        # Test read permissions
+        with open(log_file, 'r') as f:
+            content = f.read()
+        print(f"Read test: ✓")
+        
+        print("="*60)
+        print("LOGGING PATH TEST COMPLETED SUCCESSFULLY!")
+        print("="*60 + "\n")
+        
     except Exception as e:
-        print(f"Error retrieving game history: {e}")
-        return []
-
-def validate_player_names(names):
-    """Validate player names input"""
-    if not names:
-        return False, "No players entered"
-    
-    if len(names) < 4:
-        return False, "Need at least 4 players"
-    
-    if len(names) > 12:
-        return False, "Maximum 12 players allowed"
-    
-    # Check for duplicates
-    if len(set(names)) != len(names):
-        return False, "Player names must be unique"
-    
-    # Check for empty names
-    if any(not name.strip() for name in names):
-        return False, "Player names cannot be empty"
-    
-    return True, "Valid"
+        print("="*60)
+        print("LOGGING PATH TEST FAILED!")
+        print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        print("="*60 + "\n")
