@@ -1006,7 +1006,7 @@ class GameWindow:
     # ── Game over / close ────────────────────────
 
     def show_game_over(self, winner):
-        msg = f"Game Over!\n{winner} wins!\n\n"
+        msg = f"Game Over!\n{winner} wins!\n"
         if winner == "Witches" and self.is_witch:
             msg += "Congratulations! Your coven triumphed! 🔮"
         elif winner == "Town" and not self.is_witch:

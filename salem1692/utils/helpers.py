@@ -48,9 +48,8 @@ def save_game_result(msg):
         
         # Write game results
         # First line WITH timestamp
-        logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - The game result')
+        logger.info(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} - The last game\'s result')
         # Rest WITHOUT timestamp (formatter only shows message)
-        logger.info('WINNERS')
         logger.info(msg)
 
         # CRITICAL: Flush and close the handler
