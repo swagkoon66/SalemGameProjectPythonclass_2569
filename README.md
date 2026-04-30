@@ -4,7 +4,7 @@
 
 ###  Instruction to create python 3.14.4 enviroment for running this project.<br>
 First, create the python virtual enviorment <br>
---> "py -3.14.4 --m venv salem1692_python_venv" <br>
+--> "py -3.14 -m venv salem1692_python_venv" <br>
 --> "conda create --name salem1692_python_venv python=3.14.4" <br>
 <br>
 Second, activate that virtual evironment<br>
